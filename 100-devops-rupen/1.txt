@@ -1,0 +1,9 @@
+task -> Day 1: Linux User Setup with Non-Interactive Shell
+Target Server: App Server 2 (stapp02)
+User to Create: javed
+Requirement: Shell must be set to nologin.
+
+went to users and details tab, from there took the credentials of the app_server_2 (eg:- ssh steve@<server_name>),
+
+sudo useradd -s /sbin/nologin javed
+grep javed /etc/passwd (output for the user's cred should be visible now)
