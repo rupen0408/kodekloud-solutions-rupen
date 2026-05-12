@@ -1,0 +1,13 @@
+task -> Install Docker Packages (docker compose) and start Docker service
+
+ssh-ed into particular app server from the user details provided by the kodekloud
+directly tried to install using apt install docker-ce - did not work
+ran the command - hostnamectl
+found out that os was centos9
+
+went to docker documentation to install docker and docker compose plugin
+
+checked the service with systemctl status docker
+started the service with ystemctl start docker
+
+checked the installed packages via command - dnf history
