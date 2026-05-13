@@ -7,3 +7,8 @@ went to users and details tab, from there took the credentials of the app_server
 
 sudo useradd -s /sbin/nologin javed
 grep javed /etc/passwd (output for the user's cred should be visible now)
+
+
+after useradd we used "-s" because it gives a restricted shell as we don't want anyone/any human to ever use this profile
+we put user in "/sbin/nologin" because the user account we want to create is a service account and not a primary to use account.
+

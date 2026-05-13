@@ -1,0 +1,18 @@
+day 2 :- 
+task -> Temporary user setup with expiry
+Target Server: App Server 2 (stapp02)
+User to Create: yousuf
+Requirement:  a particular expiry should be setup-ed with the user
+
+went to users and details tab and got app server 3's details
+previously in the last challenge i used "useradd -s".
+now as we need to set the user's expiry date, hence i used "useradd -e"
+
+complete solution i used was :- 
+useradd -e 2026-07-24 yousuf
+
+another solution to the command i could have used was :- 
+useradd --expiredate <date> username
+
+after command execution to check, i used :- 
+change -l yousuf -> this returns user details
