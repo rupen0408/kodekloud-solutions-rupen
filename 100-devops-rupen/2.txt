@@ -16,3 +16,4 @@ useradd --expiredate <date> username
 
 after command execution to check, i used :- 
 change -l yousuf -> this returns user details
+:)
