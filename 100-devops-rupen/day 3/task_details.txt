@@ -1,0 +1,12 @@
+Day 3: Secure Root SSH Access
+task -> disable direct ssh root login on all app servers within the "Stratos Datacenter"
+
+approach that i followed :- 
+used ansible for remoting the instructions.
+got the details of all the app servers from the provided details
+wrote one inventory.ini, it consists of server details, username and passwords
+for powering up the instructions wrote one yml file, in which the instructions were defined to close the ssh root login
+
+ps:- i was blank and wasn't able to come up with solution for this problem, hence took help of another person's solution, but knew how to use ansible so got very familiar with this concept again
+
+(everything necessary for understanding has been commented in the .yml file)

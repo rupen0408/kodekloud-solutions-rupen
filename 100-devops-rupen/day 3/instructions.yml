@@ -1,0 +1,18 @@
+---
+- name: Disable direct ssh root login on all mentioned servers
+  hosts: app_servers #tells ansible which machines to talk to, looks for [app_servers] group 
+  become: true #tells ansible to use privilege escalation (sudo) to run the tasks as root
+
+  tasks:
+    - name: PermitRootLogin is set to no
+      lineinfile: #module to manage lines in text files
+        path: /etc/ssh/sshd_config #path to the sshd configuration file
+        regexp: '^#?PermitRootLogin\s+' #regular expression to find the line that starts with PermitRootLogin, optionally preceded by a comment character (#)
+        line: 'PermitRootLogin no' #the line to ensure is present in the file, setting PermitRootLogin to no
+        state: present #tells ansible to make sure this line exists (if it is already there, ansible does nothing)
+        backup: yes #tells ansible to create a backup of the file before making changes, in case something goes wrong
+
+    - name: Restart sshd service 
+      service: 
+        name: sshd #name of the service to manage
+        state: restarted #tells ansible to restart the sshd service to apply the changes made to the configuration file
