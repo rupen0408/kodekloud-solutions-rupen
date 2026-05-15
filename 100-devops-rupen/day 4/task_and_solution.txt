@@ -1,0 +1,20 @@
+task -> grant executable file permissions to a specific script 
+file path listed /tmp/xFusionCorp.sh (make this file executable)
+
+Solution :- 
+Failed the first time and streak ended here, analysed the problem and fixed it in the next try
+
+went to details of users tab, logged into particular server
+cd /tmp
+ls - listed the particular file
+ls -ll - listed the files with permissions
+chmod +rx xFusionCorp.sh
+or
+chmod 755 xFusionCorp
+
+the solution that was false and did not work was :-
+i did chmod +x xFusionCorp
+this just gave the executable permissions but no read or write permissions and hence this wasn't openable to any of the users as it only had executable permission.
+
+DAY 4 done
+
