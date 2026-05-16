@@ -1,0 +1,32 @@
+Following a security audit, the xFusionCorp Industries security team has opted to enhance application and server security with SELinux. To initiate testing, the following requirements have been established for App server 2 in the Stratos Datacenter:
+
+Install the required SELinux packages.
+Permanently disable SELinux for the time being; it will be re-enabled after necessary configuration changes.
+No need to reboot the server, as a scheduled maintenance reboot is already planned for tonight.
+Disregard the current status of SELinux via the command line; the final status after the reboot should be disabled.
+
+Solution :- 
+[root@stapp02 selinux]# history
+    1  apt install SELinux
+    2  hostnamectl
+    3  dnf install SELinux
+    4  dnf install -y policycoreutils policycoreutils-python-utils selinux-policy selinux-policy-targeted
+    5  sestatus
+    6  cd /etc/selinux/config 
+    7  cd /etc/selinux/
+    8  ls
+    9  vim config
+   10  #after installing the packages, cd /etc/selinux/ and edited the config file, there the SELINUX was set to enforcing, i set that to disabled
+   11  cat /etc/selinux/config 
+   12  history
+   13  #Following a security audit, the xFusionCorp Industries security team has opted to enhance application and server security with SELinux. To initiate testing, the following requirements have been established for App server 2 in the Stratos Datacenter:
+   14  Install the required SELinux packages.
+   15  Permanently disable SELinux for the time being; it will be re-enabled after necessary configuration changes.
+   16  No need to reboot the server, as a scheduled maintenance reboot is already planned for tonight.
+   17  Disregard the current status of SELinux via the command line; the final status after the reboot should be disabled.
+   18  clear
+   19  history
+[root@stapp02 selinux]# 
+
+
+i will fix this in the upcoming sessions make a very clean file system just like for the previous day.
