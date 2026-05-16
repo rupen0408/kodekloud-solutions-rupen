@@ -30,3 +30,10 @@ Solution :-
 
 
 i will fix this in the upcoming sessions make a very clean file system just like for the previous day.
+
+questions for myself to keep in mind and answer it here :-
+
+good work checking the os by using hostnamectl
+understand what is SELinux
+understand the working of configuration files
+understand where the software's configuration files remain everytime or are they dynamic in nature
