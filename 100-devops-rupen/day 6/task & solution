@@ -1,0 +1,354 @@
+this will also be refined tomorow (18th may)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+task :-
+The Nautilus system admins team has prepared scripts to automate several day-to-day tasks. 
+They want them to be deployed on all app servers in Stratos DC on a set schedule. 
+Before that they need to test similar functionality with a sample cron job. Therefore, perform the steps below:
+
+a. Install cronie package on all Nautilus app servers and start crond service.
+b. Add a cron */5 * * * * echo hello > /tmp/cron_text for root user.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+solution/history :-
+thor@jump-host ~$ ssh tony@stapp01
+The authenticity of host 'stapp01 (10.244.164.14)' can't be established.
+ED25519 key fingerprint is SHA256:UlmN52s3Y7xKiahCY+l6Q8EvujtiysDO0hPLkMPcRHc.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'stapp01' (ED25519) to the list of known hosts.
+tony@stapp01's password: 
+[tony@stapp01 ~]$ sudo -i
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for tony: 
+[root@stapp01 ~]# hostnamectl
+ Static hostname: stapp01
+       Icon name: computer-container
+         Chassis: container ☐
+      Machine ID: 17bbbf8f4f8543f1a0f51541a5340a73
+         Boot ID: c3e880158dfe481c897ec6163084711f
+  Virtualization: podman
+Operating System: CentOS Stream 9                 
+     CPE OS Name: cpe:/o:centos:centos:9
+          Kernel: Linux 6.8.0-90-generic
+    Architecture: x86-64
+[root@stapp01 ~]# sudo dnf install cronie cronie-anacron crontabs
+CentOS Stream 9 - BaseOS                                7.1 MB/s | 8.9 MB     00:01    
+CentOS Stream 9 - AppStream                              20 MB/s |  27 MB     00:01    
+CentOS Stream 9 - Extras packages                        48 kB/s |  21 kB     00:00    
+Extra Packages for Enterprise Linux 9 - x86_64           51 MB/s |  21 MB     00:00    
+Extra Packages for Enterprise Linux 9 openh264 (From Ci 2.7 kB/s | 2.5 kB     00:00    
+Extra Packages for Enterprise Linux 9 - Next - x86_64   1.5 MB/s | 260 kB     00:00    
+Dependencies resolved.
+========================================================================================
+ Package               Architecture  Version                        Repository     Size
+========================================================================================
+Installing:
+ cronie                x86_64        1.5.7-16.el9                   baseos        119 k
+ cronie-anacron        x86_64        1.5.7-16.el9                   baseos         31 k
+ crontabs              noarch        1.11-26.20190603git.el9        baseos         19 k
+
+Transaction Summary
+========================================================================================
+Install  3 Packages
+
+Total download size: 168 k
+Installed size: 367 k
+Is this ok [y/N]: y
+Downloading Packages:
+(1/3): crontabs-1.11-26.20190603git.el9.noarch.rpm      116 kB/s |  19 kB     00:00    
+(2/3): cronie-anacron-1.5.7-16.el9.x86_64.rpm           172 kB/s |  31 kB     00:00    
+(3/3): cronie-1.5.7-16.el9.x86_64.rpm                   429 kB/s | 119 kB     00:00    
+----------------------------------------------------------------------------------------
+Total                                                   227 kB/s | 168 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                1/1 
+  Installing       : cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Running scriptlet: cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Installing       : cronie-1.5.7-16.el9.x86_64                                     2/3 
+  Running scriptlet: cronie-1.5.7-16.el9.x86_64                                     2/3 
+Created symlink /etc/systemd/system/multi-user.target.wants/crond.service → /usr/lib/systemd/system/crond.service.
+
+  Installing       : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Running scriptlet: crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Verifying        : cronie-1.5.7-16.el9.x86_64                                     1/3 
+  Verifying        : cronie-anacron-1.5.7-16.el9.x86_64                             2/3 
+  Verifying        : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+
+Installed:
+  cronie-1.5.7-16.el9.x86_64                    cronie-anacron-1.5.7-16.el9.x86_64      
+  crontabs-1.11-26.20190603git.el9.noarch      
+
+Complete!
+[root@stapp01 ~]# systemctl status cron
+Unit cron.service could not be found.
+[root@stapp01 ~]# systemctl status crond
+○ crond.service - Command Scheduler
+     Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)
+     Active: inactive (dead)
+[root@stapp01 ~]# systemctl start crond
+[root@stapp01 ~]# systemctl status crond
+● crond.service - Command Scheduler
+     Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2026-05-17 17:30:39 UTC; 9s ago
+   Main PID: 6682 (crond)
+      Tasks: 1 (limit: 404712)
+     Memory: 952.0K
+        CPU: 2ms
+     CGroup: /system.slice/crond.service
+             └─6682 /usr/sbin/crond -n
+
+May 17 17:30:39 stapp01 systemd[1]: Started Command Scheduler.
+May 17 17:30:39 stapp01 crond[6682]: (CRON) STARTUP (1.5.7)
+May 17 17:30:39 stapp01 crond[6682]: (CRON) INFO (Syslog will be used instead of sendma>
+May 17 17:30:39 stapp01 crond[6682]: (CRON) INFO (RANDOM_DELAY will be scaled with fact>
+May 17 17:30:39 stapp01 crond[6682]: (CRON) INFO (running with inotify support)
+
+[root@stapp01 ~]# cd /tmp/
+[root@stapp01 tmp]# ls
+systemd-private-c3e880158dfe481c897ec6163084711f-dbus-broker.service-pJBK8k
+systemd-private-c3e880158dfe481c897ec6163084711f-rtkit-daemon.service-g6kHFZ
+systemd-private-c3e880158dfe481c897ec6163084711f-systemd-logind.service-xHK5zP
+systemd-private-c3e880158dfe481c897ec6163084711f-upower.service-SNHAQx
+[root@stapp01 tmp]# crontab -e * /5 * * * * echo hello > /tmp/cron_text
+crontab: usage error: no arguments permitted after this option
+Usage:
+ crontab [options] file
+ crontab [options]
+ crontab -n [hostname]
+
+Options:
+ -u <user>  define user
+ -e         edit user's crontab
+ -l         list user's crontab
+ -r         delete user's crontab
+ -i         prompt before deleting
+ -n <host>  set host in cluster to run users' crontabs
+ -c         get host in cluster to run users' crontabs
+ -T <file>  test a crontab file syntax
+ -s         selinux context
+ -V         print version and exit
+ -x <mask>  enable debugging
+
+Default operation is replace, per 1003.2
+[root@stapp01 tmp]# crontab -e
+no crontab for root - using an empty one
+crontab: installing new crontab
+[root@stapp01 tmp]# crontab -l
+*/5 * * * * echo hello > /tmp/cron_text
+[root@stapp01 tmp]# exit
+logout
+[tony@stapp01 ~]$ exit
+logout
+Connection to stapp01 closed.
+thor@jump-host ~$ ssh steve@stapp02
+The authenticity of host 'stapp02 (10.244.226.217)' can't be established.
+ED25519 key fingerprint is SHA256:35xfUXxw9LcpMDiFBFpfUl59K6Se4YflrzKJ8U2/MsU.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'stapp02' (ED25519) to the list of known hosts.
+steve@stapp02's password: 
+[steve@stapp02 ~]$ sudo -i
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for steve: 
+[root@stapp02 ~]# dnf install cronie cronie-anacron crontabs
+CentOS Stream 9 - BaseOS                                7.1 MB/s | 8.9 MB     00:01    
+CentOS Stream 9 - AppStream                             835 kB/s |  27 MB     00:33    
+CentOS Stream 9 - Extras packages                        35 kB/s |  21 kB     00:00    
+Extra Packages for Enterprise Linux 9 - x86_64           22 MB/s |  21 MB     00:00    
+Extra Packages for Enterprise Linux 9 openh264 (From Ci 2.7 kB/s | 2.5 kB     00:00    
+Extra Packages for Enterprise Linux 9 - Next - x86_64   1.4 MB/s | 260 kB     00:00    
+Dependencies resolved.
+========================================================================================
+ Package               Architecture  Version                        Repository     Size
+========================================================================================
+Installing:
+ cronie                x86_64        1.5.7-16.el9                   baseos        119 k
+ cronie-anacron        x86_64        1.5.7-16.el9                   baseos         31 k
+ crontabs              noarch        1.11-26.20190603git.el9        baseos         19 k
+
+Transaction Summary
+========================================================================================
+Install  3 Packages
+
+Total download size: 168 k
+Installed size: 367 k
+Is this ok [y/N]: y
+Downloading Packages:
+(1/3): cronie-anacron-1.5.7-16.el9.x86_64.rpm            90 kB/s |  31 kB     00:00    
+(2/3): crontabs-1.11-26.20190603git.el9.noarch.rpm       54 kB/s |  19 kB     00:00    
+(3/3): cronie-1.5.7-16.el9.x86_64.rpm                   249 kB/s | 119 kB     00:00    
+----------------------------------------------------------------------------------------
+Total                                                   272 kB/s | 168 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                1/1 
+  Installing       : cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Running scriptlet: cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Installing       : cronie-1.5.7-16.el9.x86_64                                     2/3 
+  Running scriptlet: cronie-1.5.7-16.el9.x86_64                                     2/3 
+Created symlink /etc/systemd/system/multi-user.target.wants/crond.service → /usr/lib/systemd/system/crond.service.
+
+  Installing       : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Running scriptlet: crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Verifying        : cronie-1.5.7-16.el9.x86_64                                     1/3 
+  Verifying        : cronie-anacron-1.5.7-16.el9.x86_64                             2/3 
+  Verifying        : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+
+Installed:
+  cronie-1.5.7-16.el9.x86_64                    cronie-anacron-1.5.7-16.el9.x86_64      
+  crontabs-1.11-26.20190603git.el9.noarch      
+
+Complete!
+[root@stapp02 ~]# systemctl start crond
+[root@stapp02 ~]# systemctl status crond
+● crond.service - Command Scheduler
+     Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2026-05-17 17:37:00 UTC; 7s ago
+   Main PID: 7948 (crond)
+      Tasks: 1 (limit: 404516)
+     Memory: 964.0K
+        CPU: 2ms
+     CGroup: /system.slice/crond.service
+             └─7948 /usr/sbin/crond -n
+
+May 17 17:37:00 stapp02 systemd[1]: Started Command Scheduler.
+May 17 17:37:00 stapp02 crond[7948]: (CRON) STARTUP (1.5.7)
+May 17 17:37:00 stapp02 crond[7948]: (CRON) INFO (Syslog will be used instead of sendma>
+May 17 17:37:00 stapp02 crond[7948]: (CRON) INFO (RANDOM_DELAY will be scaled with fact>
+May 17 17:37:00 stapp02 crond[7948]: (CRON) INFO (running with inotify support)
+
+[root@stapp02 ~]# crontab -e 
+no crontab for root - using an empty one
+crontab: installing new crontab
+[root@stapp02 ~]# crontab -l
+*/5 * * * * echo hello > /tmp/cron_text
+[root@stapp02 ~]# ssh banner@BigGr33n
+ssh: Could not resolve hostname biggr33n: Name or service not known
+[root@stapp02 ~]# exit
+logout
+[steve@stapp02 ~]$ ssh banner@stapp03
+The authenticity of host 'stapp03 (10.244.164.12)' can't be established.
+ED25519 key fingerprint is SHA256:GgrBFKaG47gem9AYr2jkBsqBYSRPJkQ5jo4MPAVt1Hc.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'stapp03' (ED25519) to the list of known hosts.
+banner@stapp03's password: 
+[banner@stapp03 ~]$ sudo -i
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for banner: 
+[root@stapp03 ~]# dnf install cronie cronie-anacron crontabs -y
+CentOS Stream 9 - BaseOS                                5.3 MB/s | 8.9 MB     00:01    
+CentOS Stream 9 - AppStream                             5.4 MB/s |  27 MB     00:05    
+CentOS Stream 9 - Extras packages                        50 kB/s |  21 kB     00:00    
+Extra Packages for Enterprise Linux 9 - x86_64           57 MB/s |  21 MB     00:00    
+Extra Packages for Enterprise Linux 9 openh264 (From Ci 2.9 kB/s | 2.5 kB     00:00    
+Extra Packages for Enterprise Linux 9 - Next - x86_64   1.2 MB/s | 260 kB     00:00    
+Dependencies resolved.
+========================================================================================
+ Package               Architecture  Version                        Repository     Size
+========================================================================================
+Installing:
+ cronie                x86_64        1.5.7-16.el9                   baseos        119 k
+ cronie-anacron        x86_64        1.5.7-16.el9                   baseos         31 k
+ crontabs              noarch        1.11-26.20190603git.el9        baseos         19 k
+
+Transaction Summary
+========================================================================================
+Install  3 Packages
+
+Total download size: 168 k
+Installed size: 367 k
+Downloading Packages:
+(1/3): crontabs-1.11-26.20190603git.el9.noarch.rpm      167 kB/s |  19 kB     00:00    
+(2/3): cronie-anacron-1.5.7-16.el9.x86_64.rpm           272 kB/s |  31 kB     00:00    
+(3/3): cronie-1.5.7-16.el9.x86_64.rpm                   676 kB/s | 119 kB     00:00    
+----------------------------------------------------------------------------------------
+Total                                                   262 kB/s | 168 kB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                1/1 
+  Installing       : cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Running scriptlet: cronie-anacron-1.5.7-16.el9.x86_64                             1/3 
+  Installing       : cronie-1.5.7-16.el9.x86_64                                     2/3 
+  Running scriptlet: cronie-1.5.7-16.el9.x86_64                                     2/3 
+Created symlink /etc/systemd/system/multi-user.target.wants/crond.service → /usr/lib/systemd/system/crond.service.
+
+  Installing       : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Running scriptlet: crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+  Verifying        : cronie-1.5.7-16.el9.x86_64                                     1/3 
+  Verifying        : cronie-anacron-1.5.7-16.el9.x86_64                             2/3 
+  Verifying        : crontabs-1.11-26.20190603git.el9.noarch                        3/3 
+
+Installed:
+  cronie-1.5.7-16.el9.x86_64                    cronie-anacron-1.5.7-16.el9.x86_64      
+  crontabs-1.11-26.20190603git.el9.noarch      
+
+Complete!
+[root@stapp03 ~]# systemctl start crond
+[root@stapp03 ~]# systemctl status crond
+● crond.service - Command Scheduler
+     Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2026-05-17 17:40:14 UTC; 4s ago
+   Main PID: 30942 (crond)
+      Tasks: 1 (limit: 404712)
+     Memory: 952.0K
+        CPU: 3ms
+     CGroup: /system.slice/crond.service
+             └─30942 /usr/sbin/crond -n
+
+May 17 17:40:14 stapp03 systemd[1]: Started Command Scheduler.
+May 17 17:40:14 stapp03 crond[30942]: (CRON) STARTUP (1.5.7)
+May 17 17:40:14 stapp03 crond[30942]: (CRON) INFO (Syslog will be used instead of sendm>
+May 17 17:40:14 stapp03 crond[30942]: (CRON) INFO (RANDOM_DELAY will be scaled with fac>
+May 17 17:40:14 stapp03 crond[30942]: (CRON) INFO (running with inotify support)
+
+[root@stapp03 ~]# crontab -e
+no crontab for root - using an empty one
+crontab: installing new crontab
+[root@stapp03 ~]# crontab -l
+*/5 * * * * echo hello > /tmp/cron_text
+[root@stapp03 ~]# exit
+logout
+[banner@stapp03 ~]$ exit
+logout
+Connection to stapp03 closed.
+[steve@stapp02 ~]$ exit
+logout
+Connection to stapp02 closed.
+thor@jump-host ~$ exit
+exit
+thor@jump-host ~$ exit
+exit
