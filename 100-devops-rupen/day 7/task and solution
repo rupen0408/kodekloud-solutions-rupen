@@ -1,0 +1,73 @@
+task :- 
+The system admins team of xFusionCorp Industries has set up some scripts on jump host that run on regular intervals and perform operations on all app servers in Stratos Datacenter. To make these scripts work properly we need to make sure the thor user on jump host has password-less SSH access to all app servers through their respective sudo users (i.e tony for app server 1). Based on the requirements, perform the following:-
+>Set up a password-less authentication from user thor on jump host to all app servers through their respective sudo users.
+
+solution :- 
+thor@jump-host ~$ ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/thor/.ssh/id_rsa): 
+Created directory '/home/thor/.ssh'.
+Enter passphrase for "/home/thor/.ssh/id_rsa" (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/thor/.ssh/id_rsa
+Your public key has been saved in /home/thor/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:k6hsxHbSS0Me48gGT9N0Efl2mGdgtpWKnTMHLQJtXTM thor@jump-host
+The key's randomart image is:
++---[RSA 3072]----+
+|      oo+= oE.   |
+|     o .= B +o   |
+|  . o =. B @     |
+|   * B +..% =    |
+|    X O S. B     |
+|   = = o .       |
+|    + .          |
+|   .             |
+|                 |
++----[SHA256]-----+
+thor@jump-host ~$ ssh-copy-id tony@stapp01
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/thor/.ssh/id_rsa.pub"
+The authenticity of host 'stapp01 (10.244.195.123)' can't be established.
+ED25519 key fingerprint is SHA256:u2WJBh/RM+uyS5Th3n+/cNEm6uQEvlJ7S3hzKpjjzKU.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+tony@stapp01's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with: "ssh 'tony@stapp01'"
+and check to make sure that only the key(s) you wanted were added.
+
+thor@jump-host ~$ ssh-copy-id steve@stapp02
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/thor/.ssh/id_rsa.pub"
+The authenticity of host 'stapp02 (10.244.13.73)' can't be established.
+ED25519 key fingerprint is SHA256:QU094AF/vv/ft36Z8GMknMRwTXzntlw4He1yPnhNvgE.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+steve@stapp02's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with: "ssh 'steve@stapp02'"
+and check to make sure that only the key(s) you wanted were added.
+
+thor@jump-host ~$ ssh-copy-id banner@stapp03
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/thor/.ssh/id_rsa.pub"
+The authenticity of host 'stapp03 (10.244.189.219)' can't be established.
+ED25519 key fingerprint is SHA256:l0zdx+QVEdMiby9r2DGiuUYAoCHjhXh+P+T7GQgOtnk.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+banner@stapp03's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with: "ssh 'banner@stapp03'"
+and check to make sure that only the key(s) you wanted were added.
+
+thor@jump-host ~$ 
