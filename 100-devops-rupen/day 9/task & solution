@@ -1,0 +1,183 @@
+# Day 9 task wasn't my cup of tea and i took all the help from the internet, here is the complete task and solution :-
+
+# Task:-
+# There is a critical issue going on with the Nautilus application in Stratos DC. 
+# The production support team identified that the application is unable to connect to the database. 
+# After digging into the issue, the team found that mariadb service is down on the database server.
+# Look into the issue and fix the same.
+
+# Solution :-
+# thor@jump-host ~$ systemctl status mariadb
+# System has not been booted with systemd as init system (PID 1). Can't operate.
+# Failed to connect to bus: Host is down
+# thor@jump-host ~$ ssh peter@stdb01
+# The authenticity of host 'stdb01 (10.244.153.108)' can't be established.
+# ED25519 key fingerprint is SHA256:/lIEXHObE+yHUskcFSyhtoB0ocbjuVzk5BRgQRWrEfw.
+# This key is not known by any other names.
+# Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+# Warning: Permanently added 'stdb01' (ED25519) to the list of known hosts.
+# peter@stdb01's password: 
+# [peter@stdb01 ~]$ sudo su
+
+# We trust you have received the usual lecture from the local System
+# Administrator. It usually boils down to these three things:
+
+#     #1) Respect the privacy of others.
+#     #2) Think before you type.
+#     #3) With great power comes great responsibility.
+
+# [sudo] password for peter: 
+# Sorry, try again.
+# [sudo] password for peter: 
+# [root@stdb01 peter]# systemctl status mariadb
+# ○ mariadb.service - MariaDB 10.5 database server
+#      Loaded: loaded (/usr/lib/systemd/system/mariadb.service; disabled; preset: disable>
+#      Active: inactive (dead)
+#        Docs: man:mariadbd(8)
+#              https://mariadb.com/kb/en/library/systemd/
+
+# [root@stdb01 peter]# systemctl start mariadb
+# Job for mariadb.service failed because the control process exited with error code.
+# See "systemctl status mariadb.service" and "journalctl -xeu mariadb.service" for details.
+# [root@stdb01 peter]# cd /var/lib/mysqld/
+# [root@stdb01 mysqld]# ls
+# [root@stdb01 mysqld]# ls ld
+# ls: cannot access 'ld': No such file or directory
+# [root@stdb01 mysqld]# ls -ld
+# drwxr-xr-x 1 mysql mysql 4096 Dec  2 15:22 .
+# [root@stdb01 mysqld]# cd ..
+# [root@stdb01 lib]# ls
+# alternatives  docker   httpd      misc    polkit-1  rpm        tpm2-tss
+# buildkit      flatpak  k0s        mysqld  postfix   rpm-state  upower
+# containerd    games    kubelet    nginx   private   selinux
+# dnf           geoclue  logrotate  pgsql   rancher   systemd
+# [root@stdb01 lib]# chown -R mysql:mysql /var/lib/mysql
+# chown: cannot access '/var/lib/mysql': No such file or directory
+# [root@stdb01 lib]# chown -R mysql:mysql /var/lib/mysqld
+# [root@stdb01 lib]# systemctl status mariadb
+# × mariadb.service - MariaDB 10.5 database server
+#      Loaded: loaded (/usr/lib/systemd/system/mariadb.service; disabled; preset: disable>
+#      Active: failed (Result: exit-code) since Wed 2026-05-20 16:33:31 UTC; 2min 20s ago
+#        Docs: man:mariadbd(8)
+#              https://mariadb.com/kb/en/library/systemd/
+#     Process: 11961 ExecStartPre=/usr/libexec/mariadb-check-socket (code=exited, status=>
+#     Process: 11983 ExecStartPre=/usr/libexec/mariadb-prepare-db-dir mariadb.service (co>
+#         CPU: 62ms
+
+# May 20 16:33:31 stdb01 systemd[1]: Starting MariaDB 10.5 database server...
+# May 20 16:33:31 stdb01 mariadb-prepare-db-dir[11983]: Database MariaDB is not initializ>
+# May 20 16:33:31 stdb01 mariadb-prepare-db-dir[11983]: Make sure the /var/lib/mysql is e>
+# May 20 16:33:31 stdb01 systemd[1]: mariadb.service: Control process exited, code=exited>
+# May 20 16:33:31 stdb01 systemd[1]: mariadb.service: Failed with result 'exit-code'.
+# May 20 16:33:31 stdb01 systemd[1]: Failed to start MariaDB 10.5 database server.
+# lines 1-15/15 (END)
+# ^C
+# [root@stdb01 lib]# systemctl start mariadb
+# Job for mariadb.service failed because the control process exited with error code.
+# See "systemctl status mariadb.service" and "journalctl -xeu mariadb.service" for details.
+# [root@stdb01 lib]# journalctl -xeu mariadb
+# ░░ Defined-By: systemd
+# ░░ Support: https://access.redhat.com/support
+# ░░ 
+# ░░ A start job for unit mariadb.service has finished with a failure.
+# ░░ 
+# ░░ The job identifier is 28488 and the job result is failed.
+# May 20 16:36:05 stdb01 systemd[1]: Starting MariaDB 10.5 database server...
+# ░░ Subject: A start job for unit mariadb.service has begun execution
+# ░░ Defined-By: systemd
+# ░░ Support: https://access.redhat.com/support
+# ░░ 
+# ░░ A start job for unit mariadb.service has begun execution.
+# ░░ 
+# ░░ The job identifier is 30362.
+# May 20 16:36:05 stdb01 mariadb-prepare-db-dir[12733]: Database MariaDB is not initializ>
+# May 20 16:36:05 stdb01 mariadb-prepare-db-dir[12733]: Make sure the /var/lib/mysql is e>
+# May 20 16:36:05 stdb01 systemd[1]: mariadb.service: Control process exited, code=exited>
+# ░░ Subject: Unit process exited
+# ░░ Defined-By: systemd
+# ░░ Support: https://access.redhat.com/support
+# ░░ 
+# ░░ An ExecStartPre= process belonging to unit mariadb.service has exited.
+# ░░ 
+# ░░ The process' exit code is 'exited' and its exit status is 1.
+# May 20 16:36:05 stdb01 systemd[1]: mariadb.service: Failed with result 'exit-code'.
+# ░░ Subject: Unit failed
+# ░░ Defined-By: systemd
+# ░░ Support: https://access.redhat.com/support
+# ░░ 
+# ░░ The unit mariadb.service has entered the 'failed' state with result 'exit-code'.
+# May 20 16:36:05 stdb01 systemd[1]: Failed to start MariaDB 10.5 database server.
+# ░░ Subject: A start job for unit mariadb.service has failed
+# ░░ Defined-By: systemd
+# ░░ Support: https://access.redhat.com/support
+# ░░ 
+# ░░ A start job for unit mariadb.service has finished with a failure.
+# ░░ 
+# ░░ The job identifier is 30362 and the job result is failed.
+# lines 38-64/64 (END)
+# ^C
+# [root@stdb01 lib]# ls -la /var/lib/mysqld/
+# total 16
+# drwxr-xr-x 1 mysql mysql 4096 Dec  2 15:22 .
+# drwxr-xr-x 1 root  root  4096 May 20 16:29 ..
+# [root@stdb01 lib]# ls -la /var/lib/mysql/
+# ls: cannot access '/var/lib/mysql/': No such file or directory
+# [root@stdb01 lib]# rm -rf /var/lib/mysqld/*
+# [root@stdb01 lib]# chown -R mysqld:mysqld /var/lib/mysqld/
+# chown: invalid user: ‘mysqld:mysqld’
+# [root@stdb01 lib]# cd
+# [root@stdb01 ~]# mv /var/lib/mysqld /var/lib/mysql
+# [root@stdb01 ~]# chown -R mysql:mysql /var/lib/mysql/
+# [root@stdb01 ~]# mariadb-install-db --user=mysql --basedir=/usr --datadir=/var/lib/mysql/
+# Installing MariaDB/MySQL system tables in '/var/lib/mysql/' ...
+# OK
+
+# To start mariadbd at boot time you have to copy
+# support-files/mariadb.service to the right place for your system
+
+
+# Two all-privilege accounts were created.
+# One is root@localhost, it has no password, but you need to
+# be system 'root' user to connect. Use, for example, sudo mysql
+# The second is mysql@localhost, it has no password either, but
+# you need to be the system 'mysql' user to connect.
+# After connecting you can set the password, if you would need to be
+# able to connect as any of these users with a password and without sudo
+
+# See the MariaDB Knowledgebase at https://mariadb.com/kb
+
+# You can start the MariaDB daemon with:
+# cd '/usr' ; /usr/bin/mariadbd-safe --datadir='/var/lib/mysql/'
+
+# You can test the MariaDB daemon with mysql-test-run.pl
+# cd '/usr/share/mysql-test' ; perl mariadb-test-run.pl
+
+# Please report any problems at https://mariadb.org/jira
+
+# The latest information about MariaDB is available at https://mariadb.org/.
+
+# Consider joining MariaDB's strong and vibrant community:
+# https://mariadb.org/get-involved/
+
+# [root@stdb01 ~]# systemctl start mariadb
+# [root@stdb01 ~]# systemctl status mariadb
+# ● mariadb.service - MariaDB 10.5 database server
+#      Loaded: loaded (/usr/lib/systemd/system/mariadb.service; disabled; preset: disable>
+#      Active: active (running) since Wed 2026-05-20 16:55:21 UTC; 7s ago
+#        Docs: man:mariadbd(8)
+#              https://mariadb.com/kb/en/library/systemd/
+#     Process: 17764 ExecStartPre=/usr/libexec/mariadb-check-socket (code=exited, status=>
+#     Process: 17786 ExecStartPre=/usr/libexec/mariadb-prepare-db-dir mariadb.service (co>
+#     Process: 17867 ExecStartPost=/usr/libexec/mariadb-check-upgrade (code=exited, statu>
+#    Main PID: 17845 (mariadbd)
+#      Status: "Taking your SQL requests now..."
+#       Tasks: 15 (limit: 404677)
+#      Memory: 60.2M
+#         CPU: 145ms
+#      CGroup: /system.slice/mariadb.service
+#              └─17845 /usr/libexec/mariadbd --basedir=/usr
+
+# May 20 16:55:21 stdb01 systemd[1]: Starting MariaDB 10.5 database server...
+# May 20 16:55:21 stdb01 mariadb-prepare-db-dir[17786]: Database MariaDB is probably init>
+# May 20 16:55:21 stdb01 mariadb-prepare-db-dir[17786]: If this is not the case, make sur>
+# May 20 16:55:21 stdb01 systemd[1]: Started MariaDB 10.5 database server.
