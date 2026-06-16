@@ -1,1 +1,61 @@
-coming up
+What the task wanted:-
+Create a Bash script on App Server 2 (stapp02) that:
+a> Compresses the website files from:
+/var/www/html/news
+
+b> Creates a ZIP archive named:
+xfusioncorp_news.zip
+
+c> Stores it locally in:
+/archives
+
+d> Copies the same zip file to the Storage Server (ststor1) under:
+/archives
+
+e> Runs without asking for a password
+f> Can be executed by the App Server 2 user ( steve ).
+g> Does not use 'sudo' inside the script.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+What i did:-
+a> Installed the required package (zip but first saw the hostui for package managers)
+b> Created the script - Location (/scripts/news_archive.sh)
+Contents:
+#!/bin/bash
+zip -r /archives/xfusioncorp_news.zip /var/www/html/news
+scp /archives/xfusioncorp_news.zip natasha@ststor01:/archives/
+these commands do :-
+zip -r
+zip → creates a ZIP archive.
+-r → recursively include all files and subdirectories.
+scp
+Securely copies files over SSH.
+
+c> Made the script executable : chmod +x /scripts/news_archive.sh
+d> Set up passwordless SSH - Switched to the correct user: su -steve
+Generated SSH keys: ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa 
+this created private key and public key
+
+e> copied the public key to the Storage Server (ssh-copy-id natasha@ststor01)
+added Steve's public key to: 
+~natasha/.ssh/authorized_keys on ststor01
+
+THIS RESULTED in SCP and SSH no longer asks for passwords.
+
+f> Tested everything - Ran - /scripts/news_archive.sh
+Verified that - ZIP existed on App Server 2 (/archives/xfusioncorp_news.zip)
+              - The ZIP also existed on Storage Server (/archives/xfusioncorp_news.zip)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Key Concepts:
+Bash Script → Automates a sequence of Linux commands.
+zip → Compresses files/directories into a .zip archive.
+scp → Copies files securely between servers using SSH.
+SSH Key Authentication → Enables passwordless login by trusting a public key.
+chmod +x → Makes a script executable.
+su - steve → Switches to the user who is supposed to run the script.
+Why no sudo in scripts?
+Scripts should run with the permissions of the intended user and not rely on interactive privilege escalation.
+
+Automated the backup of a website directory by zipping it, storing it locally, and securely transferring it to another server using passwordless SSH
