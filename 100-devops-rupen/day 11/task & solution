@@ -1,1 +1,19 @@
-coming up
+Step 1: Copy the Application File
+From your Jump Host, copy the .war file to the target App Server (e.g., stapp03) using scp
+scp /tmp/ROOT.war banner@stapp03:/tmp/
+Step 2: Install Tomcat
+Log into the target App Server, switch to the root user, and install Tomcat
+sudo yum install -y tomcat tomcat-webapps
+sudo systemctl enable tomcat
+Step 3: Configure the Port
+Tomcat runs on port 8080 by default. If the task requires a custom port (e.g., 8082 or 5001), edit the server.xml file
+sudo vi /etc/tomcat/server.xml
+Find the <Connector> tag and change the port attribute to your assigned requirement. 
+Step 4: Deploy the App & Start Service
+Move the .war file to the Tomcat webapps directory and start the service
+sudo cp /tmp/ROOT.war /usr/share/tomcat/webapps/
+sudo chown tomcat:tomcat /usr/share/tomcat/webapps/ROOT.war
+sudo systemctl start tomcat
+Step 5: Verify
+Return to your Jump Host and verify the deployment using curl:
+curl http://stapp03:<port>
